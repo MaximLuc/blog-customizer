@@ -2,13 +2,16 @@
 	position: fixed;
 	left: 0;
 	width: 616px;
-	height: 100%;
+	height: 1024px;
 	overflow: scroll;
 	transform: translate(-616px);
 	transition: transform 0.5s ease;
 }
 
 .container_open {
+	position: absolute;
+	top: 0;
+	left: 0;
 	transform: translate(0);
 }
 
@@ -16,10 +19,11 @@
 	display: flex;
 	flex-shrink: 0;
 	flex-direction: column;
+	row-gap: 50px;
 	box-sizing: border-box;
 	width: 616px;
-	height: auto;
-	min-height: 100%;
+	height: 100%;
+	min-height: 1024px;
 	padding: 50px 31px;
 	background-color: #ffffff;
 	border-right: 1px solid #000000;
