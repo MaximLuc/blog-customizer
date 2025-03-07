@@ -17,7 +17,7 @@ jobs:
       - name: Check if the repository is private
         if: ${{github.event.repository.private}}
         run: exit 1
-      - name: Install dependencies
+      - name: Install project dependencies
         run: npm install
       - name: Install Playwright browsers
         run: npx playwright install
