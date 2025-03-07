@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 import { Select } from '../../ui/select';
@@ -28,27 +28,59 @@ interface ArticleParamsFormProps {
 	onReset: () => void;
 }
 
-export const ArticleParamsForm = () => {
-	const [selectedFont, setSelectedFont] = useState<OptionType | null>(
-		fontFamilyOptions[0]
+export const ArticleParamsForm = ({
+	initialStyles,
+	onApply,
+	onReset,
+}: ArticleParamsFormProps) => {
+	const [selectedFont, setSelectedFont] = useState<OptionType>(
+		initialStyles.fontFamily
 	);
-	const [selectedColor, setSelectedColor] = useState<OptionType | null>(
-		fontColors[0]
+	const [selectedColor, setSelectedColor] = useState<OptionType>(
+		initialStyles.fontColor
 	);
 	const [selectedFontSize, setSelectedFontSize] = useState<OptionType>(
-		fontSizeOptions[1]
+		initialStyles.fontSize
 	);
-	const [selectedBgColor, setSelectedBgColor] = useState<OptionType | null>(
-		backgroundColors[0]
+	const [selectedBgColor, setSelectedBgColor] = useState<OptionType>(
+		initialStyles.backgroundColor
 	);
-	const [selectedContentWidth, setSelectedContentWidth] =
-		useState<OptionType | null>(contentWidthArr[0]);
+	const [selectedContentWidth, setSelectedContentWidth] = useState<OptionType>(
+		initialStyles.contentWidth
+	);
 
 	const [isFormOpen, setIsFormOpen] = useState(false);
 
 	const toggleForm = () => {
-		console.log('click');
 		setIsFormOpen((prev) => !prev);
+	};
+
+	useEffect(() => {
+		setSelectedFont(initialStyles.fontFamily);
+		setSelectedColor(initialStyles.fontColor);
+		setSelectedFontSize(initialStyles.fontSize);
+		setSelectedBgColor(initialStyles.backgroundColor);
+		setSelectedContentWidth(initialStyles.contentWidth);
+	}, [initialStyles]);
+
+	const resetForm = () => {
+		setSelectedFont(initialStyles.fontFamily);
+		setSelectedColor(initialStyles.fontColor);
+		setSelectedFontSize(initialStyles.fontSize);
+		setSelectedBgColor(initialStyles.backgroundColor);
+		setSelectedContentWidth(initialStyles.contentWidth);
+		onReset();
+	};
+
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		onApply({
+			fontFamily: selectedFont,
+			fontColor: selectedColor,
+			fontSize: selectedFontSize,
+			backgroundColor: selectedBgColor,
+			contentWidth: selectedContentWidth,
+		});
 	};
 
 	return (
@@ -56,14 +88,11 @@ export const ArticleParamsForm = () => {
 			<ArrowButton isOpen={isFormOpen} onClick={toggleForm} />
 			{isFormOpen && (
 				<aside className={styles.container_open}>
-					<form className={styles.form}>
-						<Text
-							as='h2'
-							size={31}
-							weight={800}
-							uppercase
-							align='left'
-							dynamicLite>
+					<form
+						className={styles.form}
+						onSubmit={handleSubmit}
+						onReset={resetForm}>
+						<Text as='h2' size={31} weight={800} uppercase align='left'>
 							Задайте параметры
 						</Text>
 						<Select
@@ -81,7 +110,7 @@ export const ArticleParamsForm = () => {
 							onChange={setSelectedFontSize}
 						/>
 						<Select
-							title='Цвет текста'
+							title='Цвет шрифта'
 							options={fontColors}
 							selected={selectedColor}
 							onChange={setSelectedColor}
