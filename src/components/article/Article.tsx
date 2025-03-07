@@ -1,14 +1,33 @@
 import clsx from 'clsx';
-
-// Сообщаем вебпаку, что этот файл использует это изображение.
 import plane from 'src/images/plane.png';
 import { Text } from 'src/ui/text';
-
 import styles from './Article.module.scss';
 
-export const Article = () => {
+interface ArticleProps {
+	styles: {
+		fontFamily: { value: string };
+		fontColor: { value: string };
+		fontSize: { value: string | number };
+		backgroundColor: { value: string };
+		contentWidth: { value: string };
+	};
+}
+
+export const Article = ({ styles: articleStyles }: ArticleProps) => {
+	const inlineStyles = {
+		fontFamily: articleStyles.fontFamily.value,
+		color: articleStyles.fontColor.value,
+		fontSize: articleStyles.fontSize.value,
+		backgroundColor: articleStyles.backgroundColor.value,
+		maxWidth: articleStyles.contentWidth.value,
+	};
+
+	const isNarrow = articleStyles.contentWidth.value === '948px';
+
 	return (
-		<article className={clsx(styles.article)}>
+		<article
+			className={clsx(styles.article, { [styles.narrow]: isNarrow })}
+			style={inlineStyles}>
 			<Text as='h1' size={45} weight={800} uppercase dynamicLite>
 				Портрет Западной Швейцарии
 			</Text>
@@ -17,7 +36,17 @@ export const Article = () => {
 					Примитивист Фиштр расписывает новый бюджетный авиалайнер
 				</Text>
 			</div>
-			<img className={styles.image} src={plane} alt='Картинка самолета' />
+			{isNarrow ? (
+				<div className={styles.imageWrapper}>
+					<img
+						className={styles.imageWide}
+						src={plane}
+						alt='Картинка самолета'
+					/>
+				</div>
+			) : (
+				<img className={styles.imageWide} src={plane} alt='Картинка самолета' />
+			)}
 			<Text dynamic size={18} fontStyle='italic'>
 				Фото: Hans-Peter Gauster , &quot;Bombardier CSeries CS300 HB-JCA&quot; ©
 				2017 CC BY-SA 2.0
@@ -42,8 +71,8 @@ export const Article = () => {
 				Романдия&quot; и регистрационный номер HB-JCA ; совершает в среднем 4
 				коммерческих полёта в сутки. Его можно видеть в &quot;Домодедово&quot;,
 				а также в аэропортах Парижа, Валенсии, Кракова, Берлина, Вены, Загреба,
-				на на Майорке, Крите и Сицилии. Самолёт останется в той же ливрее, пока
-				его купит другая авиакомпания.
+				на Майорке, Крите и Сицилии. Самолёт останется в той же ливрее, пока
+				купит другая авиакомпания.
 			</Text>
 		</article>
 	);
