@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 import { Select } from '../../ui/select';
@@ -50,6 +50,7 @@ export const ArticleParamsForm = ({
 	);
 
 	const [isFormOpen, setIsFormOpen] = useState(false);
+	const formContainerRef = useRef<HTMLElement>(null);
 
 	const toggleForm = () => {
 		setIsFormOpen((prev) => !prev);
@@ -62,6 +63,22 @@ export const ArticleParamsForm = ({
 		setSelectedBgColor(initialStyles.backgroundColor);
 		setSelectedContentWidth(initialStyles.contentWidth);
 	}, [initialStyles]);
+
+	useEffect(() => {
+		if (!isFormOpen) return;
+
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				formContainerRef.current &&
+				!formContainerRef.current.contains(event.target as Node)
+			) {
+				setIsFormOpen(false);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
+	}, [isFormOpen]);
 
 	const resetForm = () => {
 		setSelectedFont(initialStyles.fontFamily);
@@ -87,7 +104,7 @@ export const ArticleParamsForm = ({
 		<>
 			<ArrowButton isOpen={isFormOpen} onClick={toggleForm} />
 			{isFormOpen && (
-				<aside className={styles.container_open}>
+				<aside ref={formContainerRef} className={styles.container_open}>
 					<form
 						className={styles.form}
 						onSubmit={handleSubmit}
